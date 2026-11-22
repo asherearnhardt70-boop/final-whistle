@@ -71,7 +71,7 @@
   // Never put a service-role/secret key in browser code.
   const SUPABASE_URL = "https://nvoksypirdjjdedngmkz.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_5yrvwiFzeLbfnix98E-0xA_rx5tdRHI";
-  const supabaseReady = SUPABASE_URL.startsWith("https://") && SUPABASE_PUBLISHABLE_KEY !== "sb_publishable_5yrvwiFzeLbfnix98E-0xA_rx5tdRHI";
+  const supabaseReady = SUPABASE_URL.startsWith("https://") && SUPABASE_PUBLISHABLE_KEY.startsWith("sb_publishable_");
   const db = supabaseReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
   const $ = id => document.getElementById(id);
   const questions = [
