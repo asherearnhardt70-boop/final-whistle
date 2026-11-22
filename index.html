@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101a2b">
+  <title>Final Whistle — Sports Trivia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{--navy:#101a2b;--navy2:#17263d;--panel:#1d304b;--lime:#c7f36b;--white:#f7f8f5;--muted:#aab7c8;--line:#344861;--red:#ff6b65}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#243b58 0,transparent 38%),var(--navy);color:var(--white);font-family:"DM Sans",sans-serif;min-height:100vh}
+    button,input{font:inherit}button{cursor:pointer;border:0} .wrap{max-width:1120px;margin:auto;padding:24px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:10px 0 28px;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:14px;background:var(--lime);color:var(--navy);display:grid;place-items:center;font-size:25px;font-weight:900}.brand h1{font:900 29px "Barlow Condensed",sans-serif;letter-spacing:1px;margin:0}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2.5px;font-weight:800}
+    .account{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}.pill{border:1px solid var(--line);border-radius:999px;padding:9px 14px;background:#ffffff08;color:var(--white)}
+    .hero{padding:40px 0 28px;display:flex;justify-content:space-between;align-items:end;gap:24px}.eyebrow{color:var(--lime);font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase}.hero h2{font:900 clamp(42px,7vw,72px)/.94 "Barlow Condensed",sans-serif;margin:10px 0 12px;text-transform:uppercase;max-width:650px}.hero p{color:var(--muted);max-width:520px;line-height:1.65;margin:0}.hero-mark{font:900 100px "Barlow Condensed",sans-serif;color:#ffffff0b;line-height:.8}
+    .grid{display:grid;grid-template-columns:1.45fr .85fr;gap:18px}.panel{background:linear-gradient(145deg,#1d304b,#17263c);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 16px 40px #0002}.panel h3{font:800 25px "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.7px;margin:0 0 16px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab,.secondary{background:#ffffff0a;color:var(--white);border:1px solid var(--line);border-radius:11px;padding:10px 14px;font-weight:700}.tab.active{background:var(--lime);color:var(--navy);border-color:var(--lime)}
+    .primary{background:var(--lime);color:var(--navy);border-radius:12px;padding:13px 19px;font-weight:900;transition:transform .15s,filter .15s}.primary:hover{transform:translateY(-2px);filter:brightness(1.05)}.secondary:hover,.tab:hover{border-color:var(--lime)}
+    .question-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase}.progress{height:7px;background:#ffffff16;border-radius:9px;margin:13px 0 22px;overflow:hidden}.progress span{display:block;height:100%;background:var(--lime);width:0;transition:width .25s}
+    .question{font-size:clamp(21px,3vw,29px);font-weight:800;line-height:1.25;margin:0 0 20px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer{padding:15px;text-align:left;background:#ffffff0a;border:1px solid var(--line);border-radius:12px;color:var(--white);font-weight:700;min-height:58px}.answer:hover:not(:disabled){border-color:var(--lime);background:#c7f36b12}.answer.correct{background:#c7f36b20;border-color:var(--lime)}.answer.wrong{background:#ff6b651a;border-color:var(--red)}.answer:disabled{cursor:default}
+    .feedback{min-height:27px;margin:14px 0 8px;font-weight:700}.muted{color:var(--muted)}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.hidden{display:none!important}
+    .auth-box{max-width:470px;margin:28px auto}.field{display:grid;gap:7px;margin:13px 0}.field label{font-size:12px;color:var(--muted);font-weight:800;letter-spacing:1px;text-transform:uppercase}.field input{width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);background:#101a2b;color:white;outline:none}.field input:focus{border-color:var(--lime)}.auth-switch{color:var(--lime);background:none;padding:8px 0;font-weight:700}.notice{font-size:13px;color:var(--muted);line-height:1.5;margin-top:12px}.status{font-size:13px;color:var(--muted);margin-top:12px;min-height:20px}
+    .stat{background:#ffffff08;border:1px solid var(--line);border-radius:14px;padding:15px}.stat strong{font:900 32px "Barlow Condensed",sans-serif;color:var(--lime);display:block}.stat span{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:800}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .leader-list{list-style:none;padding:0;margin:0}.leader-list li{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);gap:10px}.leader-list li:last-child{border:0}.rank{color:var(--lime);font:800 20px "Barlow Condensed",sans-serif;width:24px}.player{display:flex;align-items:center;gap:10px;min-width:0}.avatar{width:34px;height:34px;border-radius:50%;background:#c7f36b20;color:var(--lime);display:grid;place-items:center;font-weight:900}.player-name{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis}.score{font-weight:900;color:var(--lime)}
+    footer{padding:28px 0;color:#8293a8;font-size:11px;text-align:center}
+    @media(max-width:760px){.grid{grid-template-columns:1fr}.hero-mark{display:none}.hero{padding-top:30px}.wrap{padding:16px}.panel{padding:19px}.account .email{display:none}}
+    @media(max-width:430px){.answers{grid-template-columns:1fr}.brand h1{font-size:25px}.hero h2{font-size:48px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><div class="logo">FW</div><div><h1>FINAL WHISTLE</h1><small>THE SPORTS TRIVIA ARENA</small></div></div>
+    <div class="account"><span class="email" id="account-label">Not signed in</span><button class="pill hidden" id="signout">Sign out</button><button class="pill" id="account-button">Log in</button></div>
+  </header>
+  <section class="hero"><div><div class="eyebrow">Think fast. Know sports.</div><h2>Do you know<br>the game?</h2><p>Put your sports knowledge to the test. Pick a category, beat the clock in your head, and climb the leaderboard.</p></div><div class="hero-mark">01</div></section>
+  <section id="auth-section" class="panel auth-box hidden">
+    <h3 id="auth-title">Welcome back</h3><p class="muted" id="auth-subtitle">Log in to save your scores and compete.</p>
+    <form id="auth-form"><div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email" required placeholder="you@example.com"></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters"></div><button class="primary" id="auth-submit" type="submit">Log in</button></form>
+    <button class="auth-switch" id="auth-toggle" type="button">Need an account? Sign up</button><div class="status" id="auth-status" role="status"></div>
+  </section>
+  <main class="grid" id="game-layout">
+    <section class="panel">
+      <div class="row"><h3>Game time</h3><span class="pill" id="round-label">10 questions</span></div>
+      <div class="tabs" id="category-tabs"><button class="tab active" data-category="All Sports">All Sports</button><button class="tab" data-category="Football">Football</button><button class="tab" data-category="Basketball">Basketball</button><button class="tab" data-category="Baseball">Baseball</button><button class="tab" data-category="Soccer">Soccer</button></div>
+      <div id="game">
+        <div class="question-meta"><span id="question-count">Ready when you are</span><span id="live-score">Score: 0</span></div><div class="progress"><span id="progress-bar"></span></div>
+        <p class="question" id="question-text">Ready to prove you're the ultimate sports fan?</p>
+        <div class="answers" id="answer-list"><button class="answer" disabled>Choose a category, then start your game.</button></div>
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+        <div class="row"><span class="muted" id="game-hint">10 questions · 1 point for each correct answer</span><button class="primary" id="start-button">Start game</button></div>
+      </div>
+      <div id="result" class="hidden"><div class="eyebrow">Final score</div><div style="font:900 68px 'Barlow Condensed';color:var(--lime)" id="final-score">0/10</div><p id="result-message" class="muted">Nice game!</p><div class="row"><button class="primary" id="play-again">Play again</button><span class="muted" id="save-status"></span></div></div>
+    </section>
+    <aside class="panel">
+      <h3>Your season</h3><div class="stats"><div class="stat"><strong id="best-score">—</strong><span>Personal best</span></div><div class="stat"><strong id="games-played">—</strong><span>Games played</span></div></div>
+      <div class="row"><h3 style="margin:0">Leaderboard</h3><button class="secondary" id="refresh-board" style="padding:8px 10px;font-size:11px">Refresh</button></div>
+      <ol class="leader-list" id="leaderboard"><li class="muted">Sign in to see your saved scores.</li></ol>
+      <p class="notice" id="board-note">Your scores are saved to your Final Whistle account.</p>
+    </aside>
+  </main>
+  <footer>FINAL WHISTLE · EVERY FAN HAS A SCORE TO SET</footer>
+</div>
+<script>
+(() => {
+  const SUPABASE_URL = "https://nvoksypirdjjdedngmkz.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_5yrvwiFzeLbfnix98E-0xA_rx5tdRHI";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const $ = id => document.getElementById(id);
+  const questions = [
+    ["Football","Which team has won the most Super Bowls?","New England Patriots","Dallas Cowboys","Pittsburgh Steelers","San Francisco 49ers",2],
+    ["Football","How many points is a touchdown worth before the extra point?","3","6","7","2",1],
+    ["Football","What position usually throws the ball?","Quarterback","Linebacker","Center","Safety",0],
+    ["Football","How many players from one team are on the field in standard American football?","9","10","11","12",2],
+    ["Basketball","How many points is a shot from beyond the NBA three-point line worth?","1","2","3","4",2],
+    ["Basketball","How many players from one team are on the court in basketball?","4","5","6","7",1],
+    ["Basketball","What is the championship trophy of the NBA called?","Larry O'Brien Trophy","Stanley Cup","Commissioner's Shield","Heisman Trophy",0],
+    ["Basketball","How high is a regulation basketball hoop?","9 feet","10 feet","11 feet","12 feet",1],
+    ["Baseball","How many strikes make an out?","2","3","4","5",1],
+    ["Baseball","How many bases are on a baseball diamond?","3","4","5","6",1],
+    ["Baseball","What is it called when a batter hits the ball out of the park in fair territory?","Triple","Double play","Home run","Steal",2],
+    ["Baseball","How many outs are in a half-inning?","2","3","4","6",1],
+    ["Soccer","How many players from one team start on the field?","9","10","11","12",2],
+    ["Soccer","What is it called when a player scores three goals in one game?","Hat-trick","Brace","Clean sheet","Volley",0],
+    ["Soccer","What body part can a goalkeeper use inside their own penalty area?","Only feet","Hands","Only head","Shoulders only",1],
+    ["Soccer","How long is a standard soccer match, excluding stoppage time?","80 minutes","90 minutes","100 minutes","120 minutes",1],
+    ["Football","Which event is played for the college football national championship?","The Super Bowl","The College Football Playoff","The World Series","The NBA Finals",1],
+    ["Basketball","Which league features the Boston Celtics and Los Angeles Lakers?","NFL","MLB","NBA","NHL",2],
+    ["Baseball","Which league awards the World Series championship?","MLB","MLS","NBA","NCAA",0],
+    ["Soccer","What is the international tournament held every four years called?","Copa America only","FIFA World Cup","Europa League","Gold Cup",1]
+  ].map(q => ({category:q[0],question:q[1],answers:q.slice(2,6),correct:q[6]}));
+  let category="All Sports",round=[],index=0,score=0,answered=false,authMode="login",session=null;
+  const shuffle = arr => [...arr].sort(()=>Math.random()-.5);
+  function setStatus(id,msg){$(id).textContent=msg||""}
+  function setAuthOpen(open){$("auth-section").classList.toggle("hidden",!open);if(open)$("auth-section").scrollIntoView({behavior:"smooth",block:"center"})}
+  function showAccount(){const user=session?.user;$("account-label").textContent=user?(user.email||"Signed in"):"Not signed in";$("signout").classList.toggle("hidden",!user);$("account-button").classList.toggle("hidden",!!user);$("account-button").textContent="Log in";$("best-score").textContent="—";$("games-played").textContent="—";if(user)loadScores();else{$("leaderboard").innerHTML='<li class="muted">Log in to save scores and see your leaderboard.</li>';}}
+  function startGame(){const pool=questions.filter(q=>category==="All Sports"||q.category===category);round=shuffle(pool).slice(0,Math.min(10,pool.length));index=0;score=0;answered=false;$("game").classList.remove("hidden");$("result").classList.add("hidden");$("start-button").textContent="Restart game";renderQuestion()}
+  function renderQuestion(){const q=round[index];if(!q)return finishGame();$("question-count").textContent="Question "+(index+1)+" / "+round.length;$("live-score").textContent="Score: "+score;$("progress-bar").style.width=(index/round.length*100)+"%";$("question-text").textContent=q.question;$("answer-list").innerHTML="";q.answers.forEach((a,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+".  "+a;b.addEventListener("click",()=>chooseAnswer(i));$("answer-list").appendChild(b)});setStatus("feedback","");$("game-hint").textContent=q.category+" · 1 point for each correct answer";answered=false}
+  function chooseAnswer(choice){if(answered)return;answered=true;const q=round[index];[...$("answer-list").children].forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.classList.add("correct");if(i===choice&&choice!==q.correct)b.classList.add("wrong")});if(choice===q.correct){score++;setStatus("feedback","✓ Correct! Nice one.");$("feedback").style.color="var(--lime)"}else{setStatus("feedback","Not quite — the answer is "+q.answers[q.correct]+".");$("feedback").style.color="var(--red)"}$("live-score").textContent="Score: "+score;const next=document.createElement("button");next.className="primary";next.textContent=index===round.length-1?"See results":"Next question";next.addEventListener("click",()=>{index++;renderQuestion()});$("game-hint").replaceWith(next);next.id="next-question"}
+  async function finishGame(){$("progress-bar").style.width="100%";$("game").classList.add("hidden");$("result").classList.remove("hidden");$("final-score").textContent=score+"/"+round.length;$("result-message").textContent=score===round.length?"Perfect game. You're a legend!":score>=7?"What a performance. You know your stuff!":score>=4?"Solid effort. Run it back and top that score.":"Every great season starts somewhere. Take another shot!";setStatus("save-status",session?"Saving score…":"Log in to save this score.");if(session){const {error}=await db.from("scores").insert({user_id:session.user.id,score});if(error){setStatus("save-status","Score couldn't be saved. Check the Supabase scores table and policies.");console.error(error)}else{setStatus("save-status","Score saved!");loadScores()}}}
+  async function loadScores(){if(!session)return;const {data,error}=await db.from("scores").select("user_id,score,created_at").order("score",{ascending:false}).limit(10);if(error){$("leaderboard").innerHTML='<li class="muted">Could not load scores. Check your Supabase table permissions.</li>';$("board-note").textContent="The game still works, but score access needs a database policy.";console.error(error);return}const mine=(data||[]).filter(x=>x.user_id===session.user.id);$("best-score").textContent=mine.length?Math.max(...mine.map(x=>x.score)):"0";const {count}=await db.from("scores").select("*",{count:"exact",head:true}).eq("user_id",session.user.id);$("games-played").textContent=count??mine.length;$("leaderboard").innerHTML="";if(!data?.length){$("leaderboard").innerHTML='<li class="muted">No scores yet. Be the first on the board!</li>';return}data.forEach((item,i)=>{const li=document.createElement("li");const left=document.createElement("div");left.className="player";const rank=document.createElement("span");rank.className="rank";rank.textContent=String(i+1).padStart(2,"0");const avatar=document.createElement("span");avatar.className="avatar";avatar.textContent=item.user_id===session.user.id?"Y":"•";const name=document.createElement("span");name.className="player-name";name.textContent=item.user_id===session.user.id?"You": "Player";left.append(rank,avatar,name);const points=document.createElement("span");points.className="score";points.textContent=item.score+" pts";li.append(left,points);$("leaderboard").appendChild(li)});$("board-note").textContent="Top saved scores. Other players appear as Player to protect account privacy."}
+  $("category-tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-category]");if(!b)return;category=b.dataset.category;document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));$("round-label").textContent=category==="All Sports"?"10 questions":category+" · 10 questions";});
+  $("start-button").addEventListener("click",startGame);$("play-again").addEventListener("click",startGame);$("refresh-board").addEventListener("click",loadScores);$("account-button").addEventListener("click",()=>setAuthOpen(true));$("signout").addEventListener("click",async()=>{await db.auth.signOut();setAuthOpen(false)});
+  $("auth-toggle").addEventListener("click",()=>{authMode=authMode==="login"?"signup":"login";$("auth-title").textContent=authMode==="login"?"Welcome back":"Create your account";$("auth-subtitle").textContent=authMode==="login"?"Log in to save your scores and compete.":"Sign up to join the Final Whistle arena."; $("auth-submit").textContent=authMode==="login"?"Log in":"Create account";$("auth-toggle").textContent=authMode==="login"?"Need an account? Sign up":"Already have an account? Log in";$("password").autocomplete=authMode==="login"?"current-password":"new-password";setStatus("auth-status","")});
+  $("auth-form").addEventListener("submit",async e=>{e.preventDefault();const email=$("email").value.trim(),password=$("password").value;$("auth-submit").disabled=true;setStatus("auth-status",authMode==="login"?"Logging in…":"Creating account…");let result;if(authMode==="login")result=await db.auth.signInWithPassword({email,password});else result=await db.auth.signUp({email,password});$("auth-submit").disabled=false;if(result.error){setStatus("auth-status",result.error.message);return}if(authMode==="signup"&&!result.data.session){setStatus("auth-status","Check your email for a confirmation link, then come back and log in.");return}setStatus("auth-status","You're in!");setAuthOpen(false)});
+  db.auth.onAuthStateChange((_event,newSession)=>{session=newSession;showAccount()});
+  db.auth.getSession().then(({data})=>{session=data.session;showAccount()});
+})();
+</script>
+</body>
+</html>
