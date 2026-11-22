@@ -69,9 +69,9 @@
 (() => {
   // Add your real Supabase project URL and publishable key here after setup.
   // Never put a service-role/secret key in browser code.
-  const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-  const SUPABASE_PUBLISHABLE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
-  const supabaseReady = SUPABASE_URL.startsWith("https://") && SUPABASE_PUBLISHABLE_KEY !== "YOUR_SUPABASE_PUBLISHABLE_KEY";
+  const SUPABASE_URL = "https://nvoksypirdjjdedngmkz.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_5yrvwiFzeLbfnix98E-0xA_rx5tdRHI";
+  const supabaseReady = SUPABASE_URL.startsWith("https://") && SUPABASE_PUBLISHABLE_KEY !== "sb_publishable_5yrvwiFzeLbfnix98E-0xA_rx5tdRHI";
   const db = supabaseReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
   const $ = id => document.getElementById(id);
   const questions = [
